@@ -1,3 +1,6 @@
 [submodule ".vim/pack/penguint/start/vim-airline"]
 	path = .vim/pack/penguint/start/vim-airline
 	url = https://github.com/vim-airline/vim-airline.git
+[submodule ".vim/pack/penguint/opt/dracula"]
+	path = .vim/pack/penguint/opt/dracula
+	url = https://github.com/dracula/vim.git
