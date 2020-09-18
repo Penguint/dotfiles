@@ -105,3 +105,5 @@ export PATH=$PATH:$GOROOT/bin
 export GOPATH=$HOME/gopath
 export PATH=$PATH:$GOPATH/bin
 
+# fix windows directory background
+export LS_COLORS=$LS_COLORS:'ow=01;34'
