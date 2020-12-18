@@ -97,6 +97,8 @@ fi
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+
+# dotfiles
 alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 
 # golang
@@ -112,8 +114,32 @@ export LS_COLORS=$LS_COLORS:'ow=01;34'
 export WIN_IP=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null)
 
 # proxy
-export ALL_PROXY=$WIN_IP:10809
+PROXYHOST=$WIN_IP
+PROXYPORT=10809
+sproxy() {
+  # set http proxy
+  export http_proxy=http://$PROXYHOST:$PROXYPORT
+
+  # set socks proxy (local DNS)
+  # export http_proxy=socks5://$PROXYHOST:$PROXYPORT
+
+  # set socks proxy (remote DNS)
+  # export http_proxy=socks5h://$PROXYHOST:$PROXYPORT
+
+  # export other env variables (another way)
+  export {https,ftp,rsync,all}_proxy=$http_proxy
+  export {HTTP,HTTPS,FTP,RSYNC,ALL}_PROXY=$http_proxy
+
+  export no_proxy="127.0.0.1,localhost,.localdomain.com"
+  export NO_PROXY=$no_proxy
+}
+
+cproxy() {
+  unset {http,https,ftp,rsync,all}_proxy {HTTP,HTTPS,FTP,RSYNC,ALL}_PROXY
+  unset no_proxy NO_PROXY
+}
 
 # VcSrv
 export DISPLAY=$WIN_IP:0
 export LIBGL_ALWAYS_INDIRECT=1
+
