@@ -107,3 +107,13 @@ export PATH=$PATH:$GOPATH/bin
 
 # fix windows directory background
 export LS_COLORS=$LS_COLORS:'ow=01;34'
+
+# Windows IP
+export WIN_IP=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null)
+
+# proxy
+export ALL_PROXY=$WIN_IP:10809
+
+# VcSrv
+export DISPLAY=$WIN_IP:0
+export LIBGL_ALWAYS_INDIRECT=1
