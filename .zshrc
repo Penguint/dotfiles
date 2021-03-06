@@ -110,33 +110,150 @@ export PATH=$PATH:$GOPATH/bin
 # fix windows directory background
 export LS_COLORS=$LS_COLORS:'ow=01;34'
 
-# Windows IP
-export WIN_IP=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null)
+# environment ip
+get_ip() {
+    export win_ip=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null)
+    export wsl_ip=$(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p')
+}
 
-# proxy
-PROXYHOST=$WIN_IP
-PROXYPORT=10809
+# proxy 
+get_proxy() {
+    get_ip
+    export proxy_socks5="socks5://${win_ip}:30808"
+    export proxy_socks5h="socks5h://${win_ip}:30808"
+    export proxy_http="http://${win_ip}:30809"
+}
+
 sproxy() {
-  # set http proxy
-  export http_proxy=http://$PROXYHOST:$PROXYPORT
+	get_proxy
 
-  # set socks proxy (local DNS)
-  # export http_proxy=socks5://$PROXYHOST:$PROXYPORT
+    # set http proxy
+	export {http_proxy,HTTP_PROXY}=${proxy_http}
 
-  # set socks proxy (remote DNS)
-  # export http_proxy=socks5h://$PROXYHOST:$PROXYPORT
+    # set socks proxy (local DNS)
+    # export {http_proxy, HTTP_PROXY}=${proxy_socks5}
 
-  # export other env variables (another way)
-  export {https,ftp,rsync,all}_proxy=$http_proxy
-  export {HTTP,HTTPS,FTP,RSYNC,ALL}_PROXY=$http_proxy
+    # set socks proxy (remote DNS)
+    # export {http_proxy, HTTP_PROXY}=${proxy_socks5h}
 
-  export no_proxy="127.0.0.1,localhost,.localdomain.com"
-  export NO_PROXY=$no_proxy
+	export {https_proxy,HTTPS_PROXY}=${http_proxy}
+	export {ftp_proxy,FTP_PROXY}=${http_proxy}
+	export {rsync_proxy,RSYNC_PROXY}=${http_proxy}
+	export {all_proxy,ALL_PROXY}=${http_proxy}
+
+	export {no_proxy,NO_PROXY}="127.0.0.1,localhost,.localdomain.com"
 }
 
 cproxy() {
-  unset {http,https,ftp,rsync,all}_proxy {HTTP,HTTPS,FTP,RSYNC,ALL}_PROXY
-  unset no_proxy NO_PROXY
+	unset {http,https,ftp,rsync,all}_proxy {HTTP,HTTPS,FTP,RSYNC,ALL}_PROXY
+	unset no_proxy NO_PROXY
+}
+
+sproxy_proxychains() {
+    config="$HOME/.proxychains/proxychains.conf"
+    config_bak="${config}.proxybak"
+    template="$HOME/.proxychains/proxychains.conf.template"
+    template_tmp="${template}.tmp"
+
+	get_proxy
+	proxy_socks5_ip=$(echo ${proxy_socks5} | awk -F'[/:]' '{print $4}')
+    proxy_socks5_port=$(echo ${proxy_socks5} | awk -F'[/:]' '{print $5}')
+	proxy_http_ip=$(echo ${proxy_http} | awk -F'[/:]' '{print $4}')
+    proxy_http_port=$(echo ${proxy_http} | awk -F'[/:]' '{print $5}')
+
+    cp "${template}" "${template_tmp}"
+    sed -i "s/proxy_socks5_ip/${proxy_socks5_ip}/g" "${template_tmp}"
+    sed -i "s/proxy_socks5_port/${proxy_socks5_port}/g" "${template_tmp}"
+    sed -i "s/proxy_http_ip/${proxy_http_ip}/g" "${template_tmp}"
+    sed -i "s/proxy_http_port/${proxy_http_port}/g" "${template_tmp}"
+    if [ -f "${config_bak}" ]; then
+        mv "${config_bak}" "${config}"
+    fi 
+    cp "${config}" "${config_bak}"
+    sed -i "\$r ${template_tmp}" "${config}"
+    rm "${template_tmp}"
+}
+
+cproxy_proxychains() {
+    config="$HOME/.proxychains/proxychains.conf"
+    config_bak="${config}.proxybak"
+    template="$HOME/.proxychains/proxychains.conf.template"
+    tmeplate_bak="${template}.proxybak"
+
+    if [ -f "${template_bak}" ]; then 
+        mv "${template_bak}" "${template}"
+    fi
+    if [ -f "$config_bak" ]; then 
+        mv "$config_bak" "$config"
+    fi
+}
+
+sproxy_npm() {
+    get_proxy
+    npm config set proxy ${proxy_http}
+    npm config set https-proxy ${proxy_http}
+    yarn config set proxy ${proxy_http}
+    yarn config set https-proxy ${proxy_http}
+}
+
+cproxy_npm() {
+    npm config delete proxy
+    npm config delete https-proxy
+    yarn config delete proxy
+    yarn config delete https-proxy
+}
+
+sproxy_git() {
+	get_proxy
+	# git config --global http.proxy ${proxy_socks5h}
+	git config --global http.https://github.com.proxy ${proxy_socks5h}
+    ssh_proxy=$(echo ${proxy_socks5} | awk -F'/' '{print $3}')
+	if ! grep -qF "Host github.com" ~/.ssh/config ; then
+        echo "Host github.com" >> ~/.ssh/config
+        echo "    User git" >> ~/.ssh/config
+        echo "    ProxyCommand nc -X 5 -x ${ssh_proxy} %h %p" >> ~/.ssh/config
+    else
+        lino=$(($(awk '/Host github.com/{print NR}'  ~/.ssh/config)+2))
+        sed -i "${lino}c\    ProxyCommand nc -X 5 -x ${ssh_proxy} %h %p" ~/.ssh/config
+    fi
+}
+
+cproxy_git() {
+    git config --global --unset http.https://github.com.proxy
+    # still need to edit .ssh/config manually
+}
+
+sproxy_docker() {
+    config=$HOME/.docker/config.json
+    config_bak=${config}.proxybak
+    template=$HOME/.docker/config.json.template
+    template_tmp=${template}.tmp
+
+    get_proxy
+    cp "${template}" "${template_tmp}"
+    sed -i "s#proxy_http_full#${proxy_http}#g" "${template_tmp}"
+    sed -i "s#proxy_https_full#${proxy_http}#g" "${template_tmp}"
+    if [ -f "${config_bak}" ]; then
+        mv "${config_bak}" "${config}"
+    fi
+    cp "${config}" "${config_bak}"
+    sed -i "1r ${template_tmp}" "${config}"
+    rm "${template_tmp}"
+}
+
+cproxy_docker() {
+    proxy_template=$HOME/.docker/config.json.proxy
+    proxy_template_bak=${proxy_template}.bak
+
+    if [ -f "${config_bak}" ]; then
+        mv "${config_bak}" "${config}"
+    fi
+}
+
+# transport 0.0.0.0 to 127.0.0.1
+expose_local(){
+    sudo sysctl -w net.ipv4.conf.all.route_localnet=1 >/dev/null 2>&1
+    sudo iptables -t nat -I PREROUTING -p tcp -j DNAT --to-destination 127.0.0.1
 }
 
 # VcSrv
