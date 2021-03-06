@@ -260,3 +260,7 @@ expose_local(){
 export DISPLAY=$WIN_IP:0
 export LIBGL_ALWAYS_INDIRECT=1
 
+# Turn off all beeps
+unsetopt BEEP
+# Turn off autocomplete beeps
+# unsetopt LIST_BEEP

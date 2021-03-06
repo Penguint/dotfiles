@@ -13,3 +13,6 @@ set sw=4    "shift width when indenting
 packadd! dracula
 syntax enable
 colorscheme dracula
+
+set visualbell "turn off audio bell
+set t_vb=      "turn off audio bell
