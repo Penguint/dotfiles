@@ -178,11 +178,7 @@ cproxy_proxychains() {
     config="$HOME/.proxychains/proxychains.conf"
     config_bak="${config}.proxybak"
     template="$HOME/.proxychains/proxychains.conf.template"
-    tmeplate_bak="${template}.proxybak"
 
-    if [ -f "${template_bak}" ]; then 
-        mv "${template_bak}" "${template}"
-    fi
     if [ -f "$config_bak" ]; then 
         mv "$config_bak" "$config"
     fi
@@ -224,10 +220,10 @@ cproxy_git() {
 }
 
 sproxy_docker() {
-    config=$HOME/.docker/config.json
-    config_bak=${config}.proxybak
-    template=$HOME/.docker/config.json.template
-    template_tmp=${template}.tmp
+    config="$HOME/.docker/config.json"
+    config_bak="${config}.proxybak"
+    template="$HOME/.docker/config.json.template"
+    template_tmp="${template}.tmp"
 
     get_proxy
     cp "${template}" "${template_tmp}"
@@ -242,8 +238,9 @@ sproxy_docker() {
 }
 
 cproxy_docker() {
-    proxy_template=$HOME/.docker/config.json.proxy
-    proxy_template_bak=${proxy_template}.bak
+    config="$HOME/.docker/config.json"
+    config_bak="${config}.proxybak"
+    template="$HOME/.docker/config.json.template"
 
     if [ -f "${config_bak}" ]; then
         mv "${config_bak}" "${config}"
@@ -255,6 +252,54 @@ expose_local(){
     sudo sysctl -w net.ipv4.conf.all.route_localnet=1 >/dev/null 2>&1
     sudo iptables -t nat -I PREROUTING -p tcp -j DNAT --to-destination 127.0.0.1
 }
+
+# prepare v2ray
+sproxy_v2ray() {
+    get_ip
+    config="/etc/v2ray/config.json"
+    template="/etc/v2ray/config.json.template"
+    template_tmp="${template}.tmp"
+
+    get_proxy
+	proxy_socks5_ip=$(echo ${proxy_socks5} | awk -F'[/:]' '{print $4}')
+    proxy_socks5_port=$(echo ${proxy_socks5} | awk -F'[/:]' '{print $5}')
+	proxy_http_ip=$(echo ${proxy_http} | awk -F'[/:]' '{print $4}')
+    proxy_http_port=$(echo ${proxy_http} | awk -F'[/:]' '{print $5}')
+
+    sudo cp "${template}" "${template_tmp}"
+    sudo sed -i "s/@@@proxy_socks5_ip@@@/${proxy_socks5_ip}/g" "${template_tmp}"
+    sudo sed -i "s/@@@proxy_socks5_port@@@/${proxy_socks5_port}/g" "${template_tmp}"
+    sudo sed -i "s/@@@proxy_http_ip@@@/${proxy_http_ip}/g" "${template_tmp}"
+    sudo sed -i "s/@@@proxy_http_port@@@/${proxy_http_port}/g" "${template_tmp}"
+    sudo cp "${template_tmp}" "${config}" 
+    sudo rm "${template_tmp}"
+}
+
+sproxy_all() {
+	export {http_proxy,HTTP_PROXY}="http://127.0.0.1:30811"
+	export {https_proxy,HTTPS_PROXY}=${http_proxy}
+	export {ftp_proxy,FTP_PROXY}=${http_proxy}
+	export {rsync_proxy,RSYNC_PROXY}=${http_proxy}
+	export {all_proxy,ALL_PROXY}=${http_proxy}
+	export {no_proxy,NO_PROXY}="127.0.0.1,localhost"
+    export {npm_config_proxy,NPM_CONFIG_PROXY}=${http_proxy}
+    export {npm_config_https_proxy,NPM_CONFIG_HTTPS_PROXY}=${http_proxy}
+    export YARN_HTTP_PROXY=${http_proxy}
+    export YARN_HTTPS_PROXY=${http_proxy}
+} 
+
+cproxy_all() {
+	unset {http_proxy,HTTP_PROXY}
+	unset {https_proxy,HTTPS_PROXY}
+	unset {ftp_proxy,FTP_PROXY}
+	unset {rsync_proxy,RSYNC_PROXY}
+	unset {all_proxy,ALL_PROXY}
+	unset {no_proxy,NO_PROXY}
+    unset {npm_config_proxy,NPM_CONFIG_PROXY}
+    unset {npm_config_https_proxy,NPM_CONFIG_HTTPS_PROXY}
+    unset YARN_HTTP_PROXY
+    unset YARN_HTTPS_PROXY
+} 
 
 # VcSrv
 export DISPLAY=$WIN_IP:0
