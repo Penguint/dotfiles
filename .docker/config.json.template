@@ -1,6 +1,0 @@
-  "proxies": {
-    "default": {
-      "httpProxy": "proxy_http_full",
-      "httpsProxy": "proxy_https_full"
-    }
-  },

@@ -309,3 +309,6 @@ export LIBGL_ALWAYS_INDIRECT=1
 unsetopt BEEP
 # Turn off autocomplete beeps
 # unsetopt LIST_BEEP
+
+# McFly
+eval "$(mcfly init zsh)"
