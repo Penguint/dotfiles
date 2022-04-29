@@ -62,10 +62,9 @@ nnoremap <leader>x :silent !chmod +x %<CR>
 " with what is in the register BUT it will YANK (delete) it 
 " to a VOID register. Meaning I still have what I originally had
 " when I pasted. I don't loose the previous thing I YANKED!
-" xnoremap <leader>p "_dP
-nnoremap <leader>p "+p
+xnoremap <leader>rp "_dP
 
-" next greatest remap ever : asbjornHaland
+nnoremap <leader>p "+p
 nnoremap <leader>y "+y
 vnoremap <leader>y "+y
 nmap <leader>Y "+Y
