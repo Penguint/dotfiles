@@ -54,6 +54,8 @@ imap jk <Esc>
 vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
 
+nnoremap <leader>x :silent !chmod +x %<CR>
+
 " greatest remap ever
 " Let me explain, this remap while in visiual mode
 " will delete what is currently highlighted and replace it 
