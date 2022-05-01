@@ -26,10 +26,15 @@ set signcolumn=yes
 
 call plug#begin()
 
+Plug 'neovim/nvim-lspconfig'
+
 Plug 'dracula/vim', { 'as': 'dracula' }
-Plug 'vim-airline/vim-airline'
+Plug 'projekt0n/github-nvim-theme'
+Plug 'nvim-lualine/lualine.nvim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'mbbill/undotree'
+Plug 'tpope/vim-surround'
+Plug 'lewis6991/gitsigns.nvim'
 
 " telescopte requirements...
 Plug 'nvim-lua/plenary.nvim'
@@ -37,12 +42,17 @@ Plug 'nvim-telescope/telescope.nvim'
 
 call plug#end()
 
+" lua plugin config
+lua require('plugin.nvim-lspconfig')
+lua require('plugin.lualine')
+lua require('plugin.gitsigns')
+
 syntax enable
 colorscheme dracula
 
 let mapleader = " "
 
-nnoremap <leader>u :UndotreeShow<CR>
+nnoremap <leader>u :UndotreeToggle<CR>
 nnoremap <leader><CR> :so ~/.config/nvim/init.vim<CR>
 nnoremap <leader>+ :vertical resize +5<CR>
 nnoremap <leader>- :vertical resize -5<CR>
@@ -71,3 +81,4 @@ nmap <leader>Y "+Y
 
 nnoremap <leader>d "_d
 vnoremap <leader>d "_d
+
