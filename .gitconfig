@@ -1,0 +1,6 @@
+[user]
+    name = Penguint
+    email = Penguint@users.noreply.github.com
+
+[include]
+    path = .gitconfig.local

@@ -125,10 +125,10 @@ get_proxy() {
 }
 
 sproxy() {
-	get_proxy
+    get_proxy
 
     # set http proxy
-	export {http_proxy,HTTP_PROXY}=${proxy_http}
+    export {http_proxy,HTTP_PROXY}=${proxy_http}
 
     # set socks proxy (local DNS)
     # export {http_proxy, HTTP_PROXY}=${proxy_socks5}
@@ -136,17 +136,17 @@ sproxy() {
     # set socks proxy (remote DNS)
     # export {http_proxy, HTTP_PROXY}=${proxy_socks5h}
 
-	export {https_proxy,HTTPS_PROXY}=${http_proxy}
-	export {ftp_proxy,FTP_PROXY}=${http_proxy}
-	export {rsync_proxy,RSYNC_PROXY}=${http_proxy}
-	export {all_proxy,ALL_PROXY}=${http_proxy}
+    export {https_proxy,HTTPS_PROXY}=${http_proxy}
+    export {ftp_proxy,FTP_PROXY}=${http_proxy}
+    export {rsync_proxy,RSYNC_PROXY}=${http_proxy}
+    export {all_proxy,ALL_PROXY}=${http_proxy}
 
-	export {no_proxy,NO_PROXY}="127.0.0.1,localhost,.localdomain.com"
+    export {no_proxy,NO_PROXY}="127.0.0.1,localhost,.localdomain.com"
 }
 
 cproxy() {
-	unset {http,https,ftp,rsync,all}_proxy {HTTP,HTTPS,FTP,RSYNC,ALL}_PROXY
-	unset no_proxy NO_PROXY
+    unset {http,https,ftp,rsync,all}_proxy {HTTP,HTTPS,FTP,RSYNC,ALL}_PROXY
+    unset no_proxy NO_PROXY
 }
 
 sproxy_proxychains() {
@@ -155,10 +155,10 @@ sproxy_proxychains() {
     template="$HOME/.proxychains/proxychains.conf.template"
     template_tmp="${template}.tmp"
 
-	get_proxy
-	proxy_socks5_ip=$(echo ${proxy_socks5} | awk -F'[/:]' '{print $4}')
+    get_proxy
+    proxy_socks5_ip=$(echo ${proxy_socks5} | awk -F'[/:]' '{print $4}')
     proxy_socks5_port=$(echo ${proxy_socks5} | awk -F'[/:]' '{print $5}')
-	proxy_http_ip=$(echo ${proxy_http} | awk -F'[/:]' '{print $4}')
+    proxy_http_ip=$(echo ${proxy_http} | awk -F'[/:]' '{print $4}')
     proxy_http_port=$(echo ${proxy_http} | awk -F'[/:]' '{print $5}')
 
     cp "${template}" "${template_tmp}"
@@ -200,11 +200,11 @@ cproxy_npm() {
 }
 
 sproxy_git() {
-	get_proxy
-	# git config --global http.proxy ${proxy_socks5h}
-	git config --global http.https://github.com.proxy ${proxy_socks5h}
+    get_proxy
+    # git config --global http.proxy ${proxy_socks5h}
+    git config --global http.https://github.com.proxy ${proxy_socks5h}
     ssh_proxy=$(echo ${proxy_socks5} | awk -F'/' '{print $3}')
-	if ! grep -qF "Host github.com" ~/.ssh/config ; then
+    if ! grep -qF "Host github.com" ~/.ssh/config ; then
         echo "Host github.com" >> ~/.ssh/config
         echo "    User git" >> ~/.ssh/config
         echo "    ProxyCommand nc -X 5 -x ${ssh_proxy} %h %p" >> ~/.ssh/config
@@ -261,9 +261,9 @@ sproxy_v2ray() {
     template_tmp="${template}.tmp"
 
     get_proxy
-	proxy_socks5_ip=$(echo ${proxy_socks5} | awk -F'[/:]' '{print $4}')
+    proxy_socks5_ip=$(echo ${proxy_socks5} | awk -F'[/:]' '{print $4}')
     proxy_socks5_port=$(echo ${proxy_socks5} | awk -F'[/:]' '{print $5}')
-	proxy_http_ip=$(echo ${proxy_http} | awk -F'[/:]' '{print $4}')
+    proxy_http_ip=$(echo ${proxy_http} | awk -F'[/:]' '{print $4}')
     proxy_http_port=$(echo ${proxy_http} | awk -F'[/:]' '{print $5}')
 
     sudo cp "${template}" "${template_tmp}"
@@ -276,12 +276,12 @@ sproxy_v2ray() {
 }
 
 sproxy_all() {
-	export {http_proxy,HTTP_PROXY}="http://127.0.0.1:30811"
-	export {https_proxy,HTTPS_PROXY}=${http_proxy}
-	export {ftp_proxy,FTP_PROXY}=${http_proxy}
-	export {rsync_proxy,RSYNC_PROXY}=${http_proxy}
-	export {all_proxy,ALL_PROXY}=${http_proxy}
-	export {no_proxy,NO_PROXY}="127.0.0.1,localhost"
+    export {http_proxy,HTTP_PROXY}="http://127.0.0.1:30811"
+    export {https_proxy,HTTPS_PROXY}=${http_proxy}
+    export {ftp_proxy,FTP_PROXY}=${http_proxy}
+    export {rsync_proxy,RSYNC_PROXY}=${http_proxy}
+    export {all_proxy,ALL_PROXY}=${http_proxy}
+    export {no_proxy,NO_PROXY}="127.0.0.1,localhost"
     export {npm_config_proxy,NPM_CONFIG_PROXY}=${http_proxy}
     export {npm_config_https_proxy,NPM_CONFIG_HTTPS_PROXY}=${http_proxy}
     export YARN_HTTP_PROXY=${http_proxy}
@@ -289,12 +289,12 @@ sproxy_all() {
 } 
 
 cproxy_all() {
-	unset {http_proxy,HTTP_PROXY}
-	unset {https_proxy,HTTPS_PROXY}
-	unset {ftp_proxy,FTP_PROXY}
-	unset {rsync_proxy,RSYNC_PROXY}
-	unset {all_proxy,ALL_PROXY}
-	unset {no_proxy,NO_PROXY}
+    unset {http_proxy,HTTP_PROXY}
+    unset {https_proxy,HTTPS_PROXY}
+    unset {ftp_proxy,FTP_PROXY}
+    unset {rsync_proxy,RSYNC_PROXY}
+    unset {all_proxy,ALL_PROXY}
+    unset {no_proxy,NO_PROXY}
     unset {npm_config_proxy,NPM_CONFIG_PROXY}
     unset {npm_config_https_proxy,NPM_CONFIG_HTTPS_PROXY}
     unset YARN_HTTP_PROXY
