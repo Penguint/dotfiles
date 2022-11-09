@@ -75,6 +75,7 @@ nnoremap <leader>x :silent !chmod +x %<CR>
 xnoremap <leader>rp "_dP
 
 nnoremap <leader>p "+p
+vnoremap <leader>p "+p
 nnoremap <leader>y "+y
 vnoremap <leader>y "+y
 nmap <leader>Y "+Y
