@@ -22,6 +22,13 @@ ln -s ~/.dotfiles/.cf-template/ ~/.cf-template
 mkdir -p ~/.config
 ln -s ~/.dotfiles/nvim/ ~/.config/nvim
 
+# vim-plug for neovim
+sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
+       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+nvim --cmd 'PlugInstall' \
+     -c 'qa!' # Quit vim
+
+# git config
 ln -s ~/.dotfiles/.gitconfig ~/.gitconfig
 
 # install oh-my-zsh
