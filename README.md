@@ -16,6 +16,7 @@ git clone https://github.com/Penguint/dotfiles.git ~/.dotfiles
 
 ```sh
 ln -s ~/.dotfiles/.cf-template/ ~/.cf-template
+mkdir -p ~/.config
 ln -s ~/.dotfiles/nvim/ ~/.config/nvim
 ln -s ~/.dotfiles/.gitconfig ~/.gitconfig
 ln -s ~/.dotfiles/.zshrc ~/.zshrc
