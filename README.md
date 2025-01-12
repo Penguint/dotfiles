@@ -4,7 +4,7 @@
 
 1. Clone repo into new hidden directory.
 
-```sh
+```bash
 # Use SSH (if set up)...
 git clone git@github.com:Penguint/dotfiles.git ~/.dotfiles
 
@@ -14,11 +14,8 @@ git clone https://github.com/Penguint/dotfiles.git ~/.dotfiles
 
 2. Create symlinks in the Home directory to the real files in the repo.
 
-```sh
-# cf template
-ln -s ~/.dotfiles/.cf-template/ ~/.cf-template
-
-# nvim
+```bash
+# neovim
 mkdir -p ~/.config
 ln -s ~/.dotfiles/nvim/ ~/.config/nvim
 
@@ -31,9 +28,12 @@ nvim --cmd 'PlugInstall' \
 # git config
 ln -s ~/.dotfiles/.gitconfig ~/.gitconfig
 
+# zshrc
+ln -s ~/.dotfiles/.zshrc ~/.zshrc
+
 # install oh-my-zsh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
-# zshrc
-ln -s ~/.dotfiles/.zshrc ~/.zshrc
+# cf template
+ln -s ~/.dotfiles/.cf-template/ ~/.cf-template
 ```

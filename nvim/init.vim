@@ -24,6 +24,23 @@ set scrolloff=8
 set colorcolumn=80
 set signcolumn=yes
 
+" use clipboard by default
+set clipboard+=unnamedplus
+
+" clipboard for WSL with win32yank.exe
+let g:clipboard = {
+               \    'name': 'win32yank-wsl',
+               \    'copy': {
+               \      '+': 'win32yank.exe -i --crlf',
+               \      '*': 'win32yank.exe -i --crlf',
+               \    },
+               \   'paste': {
+               \      '+': 'win32yank.exe -o --lf',
+               \      '*': 'win32yank.exe -o --lf',
+               \   },
+               \   'cache_enabled': 0,
+               \ }
+
 call plug#begin()
 
 Plug 'neovim/nvim-lspconfig'
@@ -82,4 +99,3 @@ nmap <leader>Y "+Y
 
 nnoremap <leader>d "_d
 vnoremap <leader>d "_d
-

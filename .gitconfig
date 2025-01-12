@@ -1,6 +1,6 @@
 [user]
-    name = Penguint
-    email = Penguint@users.noreply.github.com
+    name = Qizhe Tang
+    email = qizhe.tang@outlook.com
 
 [include]
     path = .gitconfig.local
